@@ -28,7 +28,8 @@ function Login() {
         authenticate(email, password).then((data) => {
             console.log("onSuccess: ", data);
             history.push(`/users/${email}`)
-        }).catch(() => {
+        }).catch((data) => {
+            console.log(data); 
             setMsg("Improper email or password, please try again...");
         })
     }
