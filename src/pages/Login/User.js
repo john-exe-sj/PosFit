@@ -97,7 +97,7 @@ function User() {
         }
     }
     // console.log(getS3url(profilePicId));
-    console.log(profilePicId);
+    // console.log(profilePicId);
     function renderUserPage() {
         return (
             <div className="userpage-container">

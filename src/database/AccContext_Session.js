@@ -11,7 +11,7 @@ const AccountContext = createContext();
 const Account = (props) => {
 
     const history = useHistory(); // necessary for user routing.
-    //used to keep track in global components ie) NavBar
+    // used to keep track in global components ie) NavBar
     const [isLoggedOut, setIsLoggedOut] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 

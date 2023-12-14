@@ -1,9 +1,7 @@
 import {useContext, useState} from 'react';
 import {Link, useHistory} from 'react-router-dom';
-import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 
 import '../../css/Login.css';
-import UserPool from "../../database/Cognito";
 import loginImg from '../../images/login/login-image.jpeg';
 import {AccountContext} from "../../database/AccContext_Session";
 
@@ -29,7 +27,7 @@ function Login() {
             console.log("onSuccess: ", data);
             history.push(`/users/${email}`)
         }).catch((data) => {
-            console.log(data); 
+            console.log(data);
             setMsg("Improper email or password, please try again...");
         })
     }

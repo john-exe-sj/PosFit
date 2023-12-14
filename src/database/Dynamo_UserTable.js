@@ -1,5 +1,5 @@
 import dynamo from "./AWS";
-import {s3, getS3url} from "../database/s3";
+import {s3} from "../database/s3";
 import {createContext} from "react";
 const UserTableContext = createContext();
 

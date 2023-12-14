@@ -3,7 +3,7 @@ import UserPool from "../../database/Cognito";
 
 import {useHistory} from "react-router-dom"
 import {useContext, useState} from "react";
-import {UserTable, UserTableContext} from "../../database/Dynamo_UserTable";
+import {UserTableContext} from "../../database/Dynamo_UserTable";
 
 function Registration(props) {
     /**

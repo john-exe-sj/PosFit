@@ -1,11 +1,13 @@
-let AWS1 = require("aws-sdk");
-let awsConfig1 = {
-    "region": "us-west-1",
-    "accessKeyId": "AKIA2E5WBUKWU3PY3OUY",
-    "secretAccessKey": "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"
+let AWS = require("aws-sdk");
+
+let awsConfig = {
+  "region": "us-east-1",
+  "accessKeyId": "AKIA3BPEGHGKD5OOSOKQ",
+  "secretAccessKey": "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"
 }
-AWS1.config.update(awsConfig1);
-const s3 = new AWS1.S3();
+
+AWS.config.update(awsConfig);
+const s3 = new AWS.S3();
 
 const myBucket = 'posfit-bucket'
 const signedUrlExpireSeconds = 60 * 5
