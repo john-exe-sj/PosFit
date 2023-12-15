@@ -14,7 +14,6 @@ async function getDynamoData(id, category){
     TableName: "videos",
     Key: {
       video_id: id,
-      category: category
     }
   }
 

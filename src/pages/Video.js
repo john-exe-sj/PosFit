@@ -19,8 +19,11 @@ import drawJoints from '../ai/draw';
 
 const defaultUserImage = getS3url("default-user.jpg");
 
+
 function getVideoID(){
-getDynamoData("0", "default").then((data) => {
+  const videoURL = window.location.href.split('/');
+  const videoID = videoURL[videoURL.length - 1]
+  getDynamoData(videoID, "default").then((data) => {
   var videoID1 = window.location.href;
   console.log(videoID1);
   videoID1 = videoID1.substring(videoID1.lastIndexOf('/')+1);

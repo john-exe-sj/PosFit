@@ -26,7 +26,7 @@ function getVideos(){
     for (let [i, value] of mapSort3) {
         if((data.Items[i]).video_id != 0) {
         var url = getS3url(data.Items[i].thumbnail_id)
-        var string = String('<a href="/video/' + data.Items[i].video_id + '_' + data.Items[i].category + '"> ' + "<img src = " + url + " width = 300px> </img> " + data.Items[i].video_title + '</a>' + '<br>')
+        var string = String('<a href="/video/' + data.Items[i].video_id + '"> ' + "<img src = " + url + " width = 300px> </img> " + data.Items[i].video_title + '</a>' + '<br>')
         console.log(string);
         document.getElementById("videos").innerHTML += "<h3> Category: " + data.Items[i].category + "<h3>" + "<br />"
         document.getElementById("videos").innerHTML += string;

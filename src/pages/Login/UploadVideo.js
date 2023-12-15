@@ -79,7 +79,11 @@ function UploadVideo(props) {
                         <input
                             required
                             type="file"
-                            onChange={(e) => setVideo(e.target.files[0])}
+                            onChange={(e) => {
+                                    console.log(e.target.files[0]); 
+                                    setVideo(e.target.files[0]); 
+                                }
+                            }       
                             accept={"video/mp4"}
                         />
                     </div> 
