@@ -1,7 +1,9 @@
-import dynamo from "./AWS";
+import aws from "./AWS";
 import {s3} from "../database/s3";
 import {createContext} from "react";
 const UserTableContext = createContext();
+
+const dynamo = aws.dynamo; 
 
 function UserTable(props) {
 

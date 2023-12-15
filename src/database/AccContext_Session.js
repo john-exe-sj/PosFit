@@ -1,11 +1,14 @@
 import React, {createContext, useState} from "react";
 import {CognitoUser, AuthenticationDetails, CognitoUserSession,} from "amazon-cognito-identity-js";
-import Pool from "./Cognito";
+//import Pool from "./Cognito";
+import aws from "./AWS";
+
 import {useHistory} from "react-router-dom";
 
 // In order to grab sessions or to take any information from Cognito we need to make a context.
 // that is accessible through all components. So we can track User throughout our site and control their
 // traffic.
+const Pool = aws.cognito; 
 const AccountContext = createContext();
 
 const Account = (props) => {
