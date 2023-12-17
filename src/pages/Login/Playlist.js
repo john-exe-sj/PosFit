@@ -5,16 +5,10 @@ import {AccountContext} from "../../database/AccContext_Session";
 import {useHistory} from "react-router-dom";
 import {UserTableContext} from "../../database/Dynamo_UserTable";
 import { getDynamoUser } from "../../database/Dynamo_Video"
-import { getS3url } from "../../database/s3";
+import aws from "../../database/AWS"; 
 import { getDynamoData } from "../../database/Dynamo_Video"
 import "../../css/Playlist.css"
 
-const url = getS3url("tennis.mp4")
-
-
-function getPlaylist(){
-    console.log('test');
-}
 
 function SetUserData(){
     const [username, setUserName] = useState("")
@@ -37,7 +31,7 @@ function SetUserData(){
 
                     getDynamoData(playlist[i].video_id, playlist[i].category).then((data1) => {
                             document.getElementById("playlist").innerHTML += '<a href="/video/' + data1.Item.video_id + '_' + data1.Item.category + '"> ' +  "<h1> " + data1.Item.video_title + "</h1>" +  "<img class = 'playlist-image' id = 'playlist-" + i + "' width='50px'></img>" + "</a>"
-                            document.getElementById("playlist-"+i).src = getS3url(data1.Item.thumbnail_id)
+                            document.getElementById("playlist-"+i).src = aws.s3.getS3url(data1.Item.thumbnail_id)
 
                       })
                 }

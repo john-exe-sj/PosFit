@@ -1,11 +1,11 @@
 import {useContext, useEffect, useState, useRef} from 'react';
 import "../css/Video.css";
 
-import { getS3url } from "../database/s3";
-import { getDynamoData } from "../database/Dynamo_Video"
-import { updateDynamo } from "../database/Dynamo_Video"
-import { updatePlaylist } from "../database/Dynamo_Video"
-import { getDynamoUser } from "../database/Dynamo_Video"
+import aws from "../database/AWS"; 
+import { getDynamoData } from "../database/Dynamo_Video";
+import { updateDynamo } from "../database/Dynamo_Video";
+import { updatePlaylist } from "../database/Dynamo_Video";
+import { getDynamoUser } from "../database/Dynamo_Video"; 
 //import tracking from "../ai/tracking"
 import Webcam from 'react-webcam';
 
@@ -17,17 +17,14 @@ import * as poseDetection from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl';
 import drawJoints from '../ai/draw'; 
 
-const defaultUserImage = getS3url("default-user.jpg");
+const defaultUserImage = aws.s3.getS3url("default-user.jpg");
 
 
 function getVideoID(){
   const videoURL = window.location.href.split('/');
-  const videoID = videoURL[videoURL.length - 1]
+  const videoID = videoURL[videoURL.length - 1]; 
+  console.log(videoID); 
   getDynamoData(videoID, "default").then((data) => {
-  var videoID1 = window.location.href;
-  console.log(videoID1);
-  videoID1 = videoID1.substring(videoID1.lastIndexOf('/')+1);
-  console.log(videoID1);
 
   document.getElementById("videoID").innerHTML = videoID1;
 
@@ -62,9 +59,9 @@ function setVideoInfo(videoID1, videoCategory){
     document.getElementById("video-category").innerHTML = "Category: " + e;
 
     const videoKey = videoID1;
-    const url = getS3url(videoKey)
+    const url = aws.s3.getS3url(videoKey)
     document.getElementById("video").src = url;
-    const imageurl1 = getS3url(g);
+    const imageurl1 = aws.s3.getS3url(g);
 
     var z = document.getElementsByClassName("user-i");
     z[0].src = imageurl1;
@@ -83,7 +80,7 @@ function setCommentInfo(videoID, category){
     }
 
     for (let i = 0; i < f.length; i++){
-      const imageurl = getS3url(f[i].imageurl)
+      const imageurl = aws.s3.getS3url(f[i].imageurl)
       
       document.getElementById("comment-date-"+i).innerHTML = f[i].date;
       document.getElementById("comment-message-"+i).innerHTML = f[i].message;
@@ -135,7 +132,7 @@ function postComment(){
     
         var inputVal = document.getElementById("user-comment").value;
         document.getElementById("comment-user-u-"+ucomm).innerHTML = signedInUserName;
-        document.getElementsByClassName("comment-image-u-"+ucomm)[0].src = getS3url(signedInUserURL);
+        document.getElementsByClassName("comment-image-u-"+ucomm)[0].src = aws.s3.getS3url(signedInUserURL);
         document.getElementById("comment-message-u-"+ucomm).innerHTML = inputVal;
         document.getElementById("comment-date-u-"+ucomm).innerHTML = today;
     
@@ -181,7 +178,7 @@ function SetUserData(){
           console.log("Session In User: ", data);
           if(data) {
             getDynamoUser(data.email).then((data) => {
-              document.getElementsByClassName("signedInUserImage")[0].src = getS3url(data.Item.user_profile);
+              document.getElementsByClassName("signedInUserImage")[0].src = aws.s3.getS3url(data.Item.user_profile);
               document.getElementById("user_email").innerHTML = data.Item.email_id;
             }
               )

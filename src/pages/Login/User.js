@@ -5,7 +5,8 @@ import {AccountContext} from "../../database/AccContext_Session";
 import {useHistory} from "react-router-dom";
 import {UserTableContext} from "../../database/Dynamo_UserTable";
 import { getDynamoUser } from "../../database/Dynamo_Video"
-import { getS3url } from "../../database/s3";
+import aws from "../../database/AWS"; 
+
 
 
 import UploadVideo from "./UploadVideo";
@@ -59,7 +60,7 @@ function User() {
                 setUserType(data.user_type);
                 setUserName(data.user_name);
                 setBio(data.bio);
-                setProfilePicId(getS3url(data.user_profile));
+                setProfilePicId(aws.s3.getS3url(data.user_profile));
                 setVideoId(data.video_id);
                 setPlaylistId(data.playlist);
             })
@@ -120,7 +121,6 @@ function User() {
                         <div style={{ width: '100%', wordWrap: 'break-word', fontSize: '1rem'}}>{bio}</div>
                     </div>
                     <div className="setting-buttons">
-                        <Link className="edit-profile" to={`/edit_profile/${email}`}>EDIT PROFILE</Link>
                         <button className="reset-password" onClick={handleChangePass} >RESET PASSWORD</button>
                     </div>
                 </div>

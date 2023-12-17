@@ -9,6 +9,8 @@ import {useHistory} from "react-router-dom";
 // that is accessible through all components. So we can track User throughout our site and control their
 // traffic.
 const Pool = aws.cognito; 
+
+
 const AccountContext = createContext();
 
 const Account = (props) => {

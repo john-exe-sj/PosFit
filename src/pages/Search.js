@@ -1,7 +1,7 @@
 import "../css/Search.css";
 import React, { useReducer, useEffect } from "react";
 import {Link} from 'react-router-dom';
-import { getS3url } from "../database/s3";
+import aws from "../database/AWS"; 
 import {UserTableContext} from "../database/Dynamo_UserTable";
 import SearchResult from "../components/SearchResult";
 
@@ -25,7 +25,7 @@ function getVideos(){
 
     for (let [i, value] of mapSort3) {
         if((data.Items[i]).video_id != 0) {
-        var url = getS3url(data.Items[i].thumbnail_id)
+        var url = aws.s3.getS3url(data.Items[i].thumbnail_id)
         var string = String('<a href="/video/' + data.Items[i].video_id + '"> ' + "<img src = " + url + " width = 300px> </img> " + data.Items[i].video_title + '</a>' + '<br>')
         console.log(string);
         document.getElementById("videos").innerHTML += "<h3> Category: " + data.Items[i].category + "<h3>" + "<br />"

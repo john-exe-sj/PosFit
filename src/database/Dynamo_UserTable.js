@@ -1,5 +1,4 @@
 import aws from "./AWS";
-import {s3} from "../database/s3";
 import {createContext} from "react";
 const UserTableContext = createContext();
 
@@ -39,10 +38,10 @@ function UserTable(props) {
                         Key: email + "_profile_pic.jpg",
                     };
 
-                    // upload their profile_pic onto s3
-                    s3.putObject(params_pfp, (err) => {
+                    // upload their profile_pic onto aws.s3
+                    aws.s3.putObject(params_pfp, (err) => {
                         if (err) {
-                            console.error(err, "could not put profile pic onto s3");
+                            console.error(err, "could not put profile pic onto aws.s3");
                         } else {
                             console.log("pfp upload success.");
                         }
@@ -80,10 +79,10 @@ function UserTable(props) {
                 Key: email + "_profile_pic.jpg",
             };
 
-            // upload their profile_pic onto s3
-            s3.deleteObject(params_pfp, (err) => {
+            // upload their profile_pic onto aws.s3
+            aws.s3.deleteObject(params_pfp, (err) => {
                 if (err) {
-                    console.error(err, "could not put profile pic onto s3");
+                    console.error(err, "could not put profile pic onto aws.s3");
                     reject(err)
                 } else {
                     console.log("pfp upload success.");

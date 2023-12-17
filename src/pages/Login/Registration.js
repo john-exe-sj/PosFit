@@ -1,9 +1,10 @@
 import '../../css/Registration.css'
-import UserPool from "../../database/Cognito";
+import aws from "../../database/AWS";
 
 import {useHistory} from "react-router-dom"
 import {useContext, useState} from "react";
 import {UserTableContext} from "../../database/Dynamo_UserTable";
+
 
 function Registration(props) {
     /**
@@ -30,7 +31,7 @@ function Registration(props) {
     function handleSubmit(e) {
         e.preventDefault();
 
-        UserPool.signUp(email, password, null, [], (err, data) => {
+        aws.cognito.signUp(email, password, null, [], (err, data) => {
             if (err) {
                 /* TODO: - notify user if incorrect email or password.
                          - use the username field?

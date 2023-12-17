@@ -59,9 +59,6 @@ function App() {
                     <Route exact path="/change_password">
                       <ChangePassword />
                     </Route>
-                    <Route exact path="/edit_profile/:email">
-                      <EditProfile />
-                    </Route>
                     <Route exact path="/delete_account">
                       <DeleteAccount />
                     </Route>

@@ -13,7 +13,6 @@ function UploadNewVid() {
 
     const {getSession} = useContext(AccountContext);
     const {retrieveUser} = useContext(UserTableContext)
-    const history = useHistory();
 
     useEffect( () => {
         getSession().then( (data) => {
