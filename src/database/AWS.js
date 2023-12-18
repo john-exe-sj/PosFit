@@ -32,6 +32,6 @@ const aws = {}
 
 aws.dynamo = new AWS.DynamoDB.DocumentClient();
 aws.cognito = new Cognito.CognitoUserPool(poolData); 
-aws.s3 = new AWS.S3();
+aws.s3 = s3; 
 
 export default aws;

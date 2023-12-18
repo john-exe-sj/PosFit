@@ -1,54 +1,70 @@
 import "../css/Search.css";
-import React, { useReducer, useEffect } from "react";
-import {Link} from 'react-router-dom';
+import React, {useState, useEffect} from "react";
+//import {Link} from 'react-router-dom';
 import aws from "../database/AWS"; 
-import {UserTableContext} from "../database/Dynamo_UserTable";
+//import {UserTableContext} from "../database/Dynamo_UserTable";
 import SearchResult from "../components/SearchResult";
 
-import { dynamo4, scanTable } from "../database/Dynamo_Video"
-import { dynamo, getDynamoData } from "../database/Dynamo_Video"
+import {scanTable} from "../database/Dynamo_Video"; 
 
-function getVideos(){
+function VideoCards(props) {
+  const data = props.data; 
+  const idx = props.idx; 
+  return (
 
-  scanTable().then((data) => {
-    var numVideos = data.Items.length;
-
-    const myMap = new Map();
-
-    for(var i = 0; i < numVideos; i++){
-      myMap.set(i, data.Items[i].category);
-    }
-
-    const mapSort3 = new Map([...myMap.entries()].sort());
-    console.log(mapSort3);
-
-
-    for (let [i, value] of mapSort3) {
-        if((data.Items[i]).video_id != 0) {
-        var url = aws.s3.getS3url(data.Items[i].thumbnail_id)
-        var string = String('<a href="/video/' + data.Items[i].video_id + '"> ' + "<img src = " + url + " width = 300px> </img> " + data.Items[i].video_title + '</a>' + '<br>')
-        console.log(string);
-        document.getElementById("videos").innerHTML += "<h3> Category: " + data.Items[i].category + "<h3>" + "<br />"
-        document.getElementById("videos").innerHTML += string;
-        }
-      }
-  })
+    <div className="video_card" style={{padding:"2em"}}>
+      <br/>
+      <a href={"/video/" + data.Items[idx].video_id}>
+        <img src={aws.s3.getS3url(data.Items[idx].thumbnail_id)} alt={data.Items[idx].video_title} style={{width: "20em"}}/>
+        {data.Items[props.idx].video_title}
+      </a>
+      <br/>
+    </div>
+  ); 
 }
 
+
 function Search() {
-    return (
-      <div className="search">
-          <h1>Search page</h1>
-          <SearchResult />        
-          <Link to={'/play_video'}>First video; Yoga Demo</Link>
-          <br /> <br />
 
-          <div id = "videos">
+  const [arrOfVideoCards, setArrOfVideoCards] = useState([]); 
 
-          </div>
-          {getVideos()}
-      </div>
+  useEffect(() => {
+
+    scanTable().then((data) => {
+      const arr = []
+      for(let i = 0; i < data.Items.length; i++) {
+        arr.push((<VideoCards data={data} idx={i}/>)); 
+      }
+      setArrOfVideoCards(arr); 
+    }); 
+
+  }); 
+
+  return (
+    <div className="search">
+        <h1>Search page</h1>
+        <SearchResult />        
+        <br />
+        <div id = "videos">
+          {arrOfVideoCards}
+        </div>
+    </div>
     );
   }
   
   export default Search;
+
+/*
+  return (
+    <div className="search">
+        <h1>Search page</h1>
+        <SearchResult />        
+        <Link to={'/play_video'}>First video; Yoga Demo</Link>
+        <br />
+        <div id = "videos">
+          {arrOfVideoCards}
+        </div>
+    </div>
+    );
+  }
+*/

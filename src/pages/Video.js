@@ -16,8 +16,7 @@ import {UserTableContext} from "../database/Dynamo_UserTable";
 import * as poseDetection from '@tensorflow-models/pose-detection';
 import '@tensorflow/tfjs-backend-webgl';
 import drawJoints from '../ai/draw'; 
-
-const defaultUserImage = aws.s3.getS3url("default-user.jpg");
+const getS3url = aws.s3.getS3url; 
 
 
 function getVideoID(){
@@ -59,9 +58,9 @@ function setVideoInfo(videoID1, videoCategory){
     document.getElementById("video-category").innerHTML = "Category: " + e;
 
     const videoKey = videoID1;
-    const url = aws.s3.getS3url(videoKey)
+    const url = getS3url(videoKey)
     document.getElementById("video").src = url;
-    const imageurl1 = aws.s3.getS3url(g);
+    const imageurl1 = getS3url(g);
 
     var z = document.getElementsByClassName("user-i");
     z[0].src = imageurl1;
@@ -80,7 +79,7 @@ function setCommentInfo(videoID, category){
     }
 
     for (let i = 0; i < f.length; i++){
-      const imageurl = aws.s3.getS3url(f[i].imageurl)
+      const imageurl = getS3url(f[i].imageurl)
       
       document.getElementById("comment-date-"+i).innerHTML = f[i].date;
       document.getElementById("comment-message-"+i).innerHTML = f[i].message;
@@ -132,7 +131,7 @@ function postComment(){
     
         var inputVal = document.getElementById("user-comment").value;
         document.getElementById("comment-user-u-"+ucomm).innerHTML = signedInUserName;
-        document.getElementsByClassName("comment-image-u-"+ucomm)[0].src = aws.s3.getS3url(signedInUserURL);
+        document.getElementsByClassName("comment-image-u-"+ucomm)[0].src = getS3url(signedInUserURL);
         document.getElementById("comment-message-u-"+ucomm).innerHTML = inputVal;
         document.getElementById("comment-date-u-"+ucomm).innerHTML = today;
     
@@ -178,7 +177,7 @@ function SetUserData(){
           console.log("Session In User: ", data);
           if(data) {
             getDynamoUser(data.email).then((data) => {
-              document.getElementsByClassName("signedInUserImage")[0].src = aws.s3.getS3url(data.Item.user_profile);
+              document.getElementsByClassName("signedInUserImage")[0].src = getS3url(data.Item.user_profile);
               document.getElementById("user_email").innerHTML = data.Item.email_id;
             }
               )
@@ -278,7 +277,6 @@ function Video() {
                     <div class = "comments-header">
                         <div class = "comment-num" id = "comment-num">Comments (</div><div class = "comment-num1" id = "comment-num1"></div><div class = "comment-num">)</div>
                         <div class = "signedInUser">
-                            <img id = "userimg" class = "signedInUserImage" src = {defaultUserImage}></img>
                         </div>
                         <div class = "comment-form">
                             <form id = "submit-comment">
@@ -302,4 +300,4 @@ function Video() {
   );
 }
 
-export default Video;
+export default {};

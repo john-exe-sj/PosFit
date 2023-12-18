@@ -37,12 +37,10 @@ const SearchBar=(props)=> {
         <div className="search-bar">
             <form className="search-bar-form" onSubmit={onsubmit}>
 
-                <label>Search for videos from DynamoScan</label>
                 <input
                     required
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
-                    onChange={handleSearchInputChanges}
                     type="text"
                     
                 />

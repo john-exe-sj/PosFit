@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {AccountContext} from "../../database/AccContext_Session";
-import {useHistory} from "react-router-dom";
 import {UserTableContext} from "../../database/Dynamo_UserTable";
 import UploadVideo from "./UploadVideo";
 import '../../css/UploadPage.css';
