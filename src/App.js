@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import About from './pages/About';
 import Search from './pages/Search';
-import Video from './pages/Video';
+import VideoPlayer from './pages/VideoPlayer';
 import Login from './pages/Login/Login';
 import Register from './pages/Login/Registration';
 import User from './pages/Login/User'
@@ -66,7 +66,7 @@ function App() {
                       <PlayVideo />
                     </Route>
                     <Route path="/video/:id">
-                      <Video />
+                      <VideoPlayer />
                     </Route>
                     <Route exact path="/upload_video">
                       <UploadNewVid />

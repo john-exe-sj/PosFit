@@ -1,6 +1,6 @@
 import aws from "./AWS"; 
 
-async function getDynamoData(id, category){
+async function getDynamoData(id){
   let params = {
     TableName: "videos",
     Key: {

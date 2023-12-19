@@ -9,8 +9,8 @@ import aws from "../../database/AWS";
 
 
 
-import UploadVideo from "./UploadVideo";
-import Playlist from "./Playlist";
+//import UploadVideo from "./UploadVideo";
+//import Playlist from "./Playlist";
 
 function User() {
     /**
