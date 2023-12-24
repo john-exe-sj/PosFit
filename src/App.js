@@ -15,7 +15,6 @@ import Footer from './components/Footer';
 import MemberDisplay from './components/MemberDisplay';
 import PageNotFound from "./pages/PageNotFound";
 import UploadNewVid from "./pages/Login/UploadNewVid"
-import EditProfile from './pages/Login/EditProfile';
 import {Account} from "./database/AccContext_Session";
 import {UserTable} from "./database/Dynamo_UserTable";
 import {VideoDatabase} from "./database/Video_S3andDynamo"

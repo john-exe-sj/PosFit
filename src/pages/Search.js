@@ -33,7 +33,7 @@ function Search() {
     scanTable().then((data) => {
       const arr = []
       for(let i = 0; i < data.Items.length; i++) {
-        arr.push((<VideoCards data={data} idx={i}/>)); 
+        arr.push((<VideoCards key={i} data={data} idx={i}/>)); 
       }
       setArrOfVideoCards(arr); 
     }); 
