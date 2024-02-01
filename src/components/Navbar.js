@@ -9,20 +9,22 @@ function Navbar () {
     const {getSession, isLoggedOut, isAuthenticated, logout} = useContext(AccountContext);
     const [email, setEmail] = useState("");
     const [session, setSession] = useState(null);
+    const [status, setStatus] = useState(false); 
 
     useEffect(() => {
-
         getSession().then( (__session) => {
             console.log("Session In NavBar: ", __session);
             setEmail(__session.email);
             setSession(__session);
+            setStatus(true)
         })
-    }, [isLoggedOut, isAuthenticated]);
+    }, [isLoggedOut, isAuthenticated, status]);
 
+    /*
     console.log(isLoggedOut, "IsLoggedOut");
     console.log(isAuthenticated, "IsAuthenticated");
     console.log(session !== null ? "session exist" : "session does not exist");
-
+    */
     return (
         <div className="header">
             <div className="navbar-left">

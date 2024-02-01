@@ -68,6 +68,7 @@ function CategorySlider() {
               return (
                 <div className="list-of-image">
                     <img 
+                        key={i}
                         src={image}
                         alt="none"
                         style={{ width: '100%', height: 300,}}

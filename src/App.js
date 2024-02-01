@@ -3,7 +3,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import About from './pages/About';
 import Search from './pages/Search';
-import Video from './pages/Video';
+import VideoPlayer from './pages/VideoPlayer';
 import Login from './pages/Login/Login';
 import Register from './pages/Login/Registration';
 import User from './pages/Login/User'
@@ -15,7 +15,6 @@ import Footer from './components/Footer';
 import MemberDisplay from './components/MemberDisplay';
 import PageNotFound from "./pages/PageNotFound";
 import UploadNewVid from "./pages/Login/UploadNewVid"
-import EditProfile from './pages/Login/EditProfile';
 import {Account} from "./database/AccContext_Session";
 import {UserTable} from "./database/Dynamo_UserTable";
 import {VideoDatabase} from "./database/Video_S3andDynamo"
@@ -59,9 +58,6 @@ function App() {
                     <Route exact path="/change_password">
                       <ChangePassword />
                     </Route>
-                    <Route exact path="/edit_profile/:email">
-                      <EditProfile />
-                    </Route>
                     <Route exact path="/delete_account">
                       <DeleteAccount />
                     </Route>
@@ -69,7 +65,7 @@ function App() {
                       <PlayVideo />
                     </Route>
                     <Route path="/video/:id">
-                      <Video />
+                      <VideoPlayer />
                     </Route>
                     <Route exact path="/upload_video">
                       <UploadNewVid />

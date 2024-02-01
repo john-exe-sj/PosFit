@@ -1,15 +1,7 @@
-const AWS = require("aws-sdk");
+import aws from "./AWS"; 
 
-let awsConfig = {
-  "region": "us-east-1",
-  "accessKeyId": "AKIA3BPEGHGKD5OOSOKQ",
-  "secretAccessKey": "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"
-}
-
-AWS.config.update(awsConfig)
-const dynamo = new AWS.DynamoDB.DocumentClient();
-
-async function getDynamoData(id, category){
+async function getDynamoData(id){
+  console.log(id);
   let params = {
     TableName: "videos",
     Key: {
@@ -17,7 +9,7 @@ async function getDynamoData(id, category){
     }
   }
 
-  return dynamo.get(params).promise();
+  return aws.dynamo.get(params).promise();
 }
 
 function updateDynamo(inputVal, signedInUserName, signedInUserImageKey, videoID, videoCategory){
@@ -51,7 +43,7 @@ function updateDynamo(inputVal, signedInUserName, signedInUserImageKey, videoID,
       ReturnValues:"UPDATED_NEW"
   };
   
-  dynamo.update(params, function(err, data) {
+  aws.dynamo.update(params, function(err, data) {
 
       console.log("Updating the item...");
       if (err) {
@@ -84,7 +76,7 @@ function updatePlaylist(signedInUserEmail, videoID, videoCategory){
       ReturnValues:"UPDATED_NEW"
   };
   
-  dynamo.update(params, function(err, data) {
+  aws.dynamo.update(params, function(err, data) {
     console.log("Updating playlist...");
     if (err) {
       console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
@@ -103,14 +95,14 @@ async function getDynamoUser(email_id) {
     }
   }
   
-  return dynamo.get(params).promise();
+  return aws.dynamo.get(params).promise();
 }
 
 async function scanTable(){
   let params = {
     TableName: "videos",
   }
-  return dynamo.scan(params).promise();
+  return aws.dynamo.scan(params).promise();
 };
 
 async function dynamoScan(category){  
@@ -124,7 +116,7 @@ async function dynamoScan(category){
   };
 
   console.log("Scanning table.");
-  dynamo.scan(params, onScan);
+  aws.dynamo.scan(params, onScan);
 
   function onScan(err, data) {
     if (err) {
@@ -144,10 +136,10 @@ async function dynamoScan(category){
       if (typeof data.LastEvaluatedKey != "undefined") {
         console.log("Scanning for more...");
         params.ExclusiveStartKey = data.LastEvaluatedKey;
-        dynamo.scan(params, onScan);
+        aws.dynamo.scan(params, onScan);
       }
     }
   }
 }; 
 
-export {dynamo, getDynamoData, updateDynamo, updatePlaylist, getDynamoUser, scanTable, dynamoScan};
+export {getDynamoData, updateDynamo, updatePlaylist, getDynamoUser, scanTable, dynamoScan};

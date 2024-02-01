@@ -1,6 +1,5 @@
 import {useContext, useState} from 'react';
 import {Link, useHistory} from 'react-router-dom';
-
 import '../../css/Login.css';
 import loginImg from '../../images/login/login-image.jpeg';
 import {AccountContext} from "../../database/AccContext_Session";

@@ -31,6 +31,7 @@ function UploadVideo(props) {
                 category: category
             })
             .then((success) => {
+                
                 if (success) {
                     setVideoTitle("");
                     setVideoDesc("");
@@ -41,11 +42,12 @@ function UploadVideo(props) {
                     console.log("Successful upload");
                 }
                 console.log(success);
+                
+                history.push("/users/:email");
             })
             .catch(err => {
                 console.error("error in uploadVideo()", err);
             });
-        history.push("/users/:email");
     }
 
     return (

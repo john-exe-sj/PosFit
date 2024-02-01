@@ -5,11 +5,12 @@ import {AccountContext} from "../../database/AccContext_Session";
 import {useHistory} from "react-router-dom";
 import {UserTableContext} from "../../database/Dynamo_UserTable";
 import { getDynamoUser } from "../../database/Dynamo_Video"
-import { getS3url } from "../../database/s3";
+import aws from "../../database/AWS"; 
 
 
-import UploadVideo from "./UploadVideo";
-import Playlist from "./Playlist";
+
+//import UploadVideo from "./UploadVideo";
+//import Playlist from "./Playlist";
 
 function User() {
     /**
@@ -30,41 +31,39 @@ function User() {
     const history = useHistory();
 
     // grabs the user session once, and uploads the user page with user's information.
-    useEffect( () => {
-        getSession().then( (data) => {
-            console.log("Session In User: ", data);
-            if(data) {
-                setStatus(true)
-                setEmail(data.email)
-                return data.email
-            } else {
-                console.error("Error in user-page:\n", data);
-                return undefined;
-            }
-        }).then(email => {
-            retrieveUser(email).then(result => {
-                const data = result.Item
-                /**
-                 * TODO: fill in user-page with user info
-                 *      data = {
-                 *          email_id: string, contains the user's email
-                 *          user_type: string, identifies the user as a trainer or trainee
-                 *          user_name: string, contains the user's username
-                 *          bio : string, contains the user's biography
-                 *          user_profile : contains the user's profile_pic_id that's stored in s3,
-                 *          playlist: Array[] : list of video_id's stored in s3
-                 *          video_id: Array[] : list of video_id's that the user uploaded stored in s3.
-                 *      }
-                 */
-                setUserType(data.user_type);
-                setUserName(data.user_name);
-                setBio(data.bio);
-                setProfilePicId(getS3url(data.user_profile));
-                setVideoId(data.video_id);
-                setPlaylistId(data.playlist);
-            })
-        })
-    }, [])
+    useEffect(() => {
+        if (!status) {
+            getSession().then((data) => {
+                console.log("Session In User: ", data);
+                if(data) {
+                    setEmail(data.email)
+                    return data.email
+                } else {
+                    console.error("Error in user-page:\n", data);
+                    history.push("/login"); 
+                    return undefined;
+                }
+            }).then(email => {
+                retrieveUser(email).then(result => {
+                    const data = result.Item
+                    /**
+                    * TODO: fill in user-page with user info
+                    *      data = {
+                    *          playlist: Array[] : list of video_id's stored in s3
+                    *          video_id: Array[] : list of video_id's that the user uploaded stored in s3.
+                    *      }
+                    */
+                    setUserType(data.user_type);
+                    setUserName(data.user_name);
+                    setBio(data.bio);
+                    setProfilePicId(aws.s3.getS3url(data.user_profile));
+                    setVideoId(data.video_id);
+                    setPlaylistId(data.playlist);
+                    setStatus(true); 
+                }); 
+            }); 
+        }
+    }, [status]); 
 
     // functions to handle changing pages
     function handleChangePass(e) {
@@ -77,31 +76,10 @@ function User() {
         history.push("/upload_video");
     }
 
-    function getPlaylist() {
-        var f = playlist_id
-        console.log(f.length)
-        for (let i = 0; i < f.length; i++) {
-            document.getElementById("playlist").innerHTML = '<div class = "video-item"> <div class ="video-image"> <img class = "video-image-' + i + '" id = "userimg" src={imageurl} alt="user image"></img> </div> <div class = "video-title" id = "video-title">' + document.getElementById("playlist").innerHTML;
-        }
-
-        for (let i = 0; i < f.length; i++) {
-            /*
-          const imageurl = getS3url(f[i].imageurl)
-
-          document.getElementById("comment-date-"+i).innerHTML = f[i].date;
-          document.getElementById("comment-message-"+i).innerHTML = f[i].message;
-          document.getElementById("comment-user-"+i).innerHTML = f[i].username;
-          document.getElementsByClassName("comment-image-"+i)[0].src = imageurl;
-          */
-
-        }
-    }
-    // console.log(getS3url(profilePicId));
-    // console.log(profilePicId);
+    
     function renderUserPage() {
         return (
             <div className="userpage-container">
-                {/* <img src={getS3url(profilePicId)}></img> */}
                 <div className="user-profile-bar">
                     <img className="user-profile-pic" src={profilePicId} alt="profilePic"/>
                     <div className="user-profile-type">
@@ -120,7 +98,6 @@ function User() {
                         <div style={{ width: '100%', wordWrap: 'break-word', fontSize: '1rem'}}>{bio}</div>
                     </div>
                     <div className="setting-buttons">
-                        <Link className="edit-profile" to={`/edit_profile/${email}`}>EDIT PROFILE</Link>
                         <button className="reset-password" onClick={handleChangePass} >RESET PASSWORD</button>
                     </div>
                 </div>

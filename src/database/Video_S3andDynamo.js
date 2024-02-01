@@ -1,19 +1,9 @@
-import dynamo from "./AWS";
+import aws from "./AWS";
 import {createContext, useContext} from "react";
 import {UserTableContext} from "./Dynamo_UserTable";
 import { v4 as uuidV4 } from 'uuid';
 
 const VideoContext = createContext();
-
-
-let AWS1 = require("aws-sdk");
-let awsConfig1 = {
-    "region": "us-east-1",
-    "accessKeyId": "AKIA3BPEGHGKD5OOSOKQ",
-    "secretAccessKey": "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"
-}
-AWS1.config.update(awsConfig1);
-const s3 = new AWS1.S3();
 
 function VideoDatabase(props) {
     const {appendVideoKey} = useContext(UserTableContext);
@@ -49,7 +39,7 @@ function VideoDatabase(props) {
             };
 
             // puts the entry in the videos table.
-            dynamo.put(params_dynamoVideos, (err) => {
+            aws.dynamo.put(params_dynamoVideos, (err) => {
                 if(err) {
                     console.error(err, "could not enter new video entries in dynamodb videos table: " + video.title);
                     reject(err)
@@ -64,7 +54,7 @@ function VideoDatabase(props) {
                         Key: unique_id + ".jpg",
                     }
                     // puts the thumbnail object in our s3 video bucket
-                    s3.putObject(params_thumbnail, (err) => {
+                    aws.s3.putObject(params_thumbnail, (err) => {
                         if(err) {
                             console.error(err, "could not put thumbnail onto s3");
                             reject(err)
@@ -79,7 +69,7 @@ function VideoDatabase(props) {
                         Key: unique_id + ".mp4",
                     }
                     // puts the video object in our s3 video bucket
-                    s3.putObject(params_video, (err) => {
+                    aws.s3.putObject(params_video, (err) => {
                         if(err) {
                             console.error(err, "could not put video onto s3");
                             reject(err)
