@@ -121,23 +121,79 @@ function updatePlaylistFunction(signedInUserEmail){
 function CommentSection() {
   // TODO: Add current user info. 
   const {getSession} = useContext(AccountContext);
+  const {retrieveUser} = useContext(UserTableContext); 
+
+  const [currentUserInfo, setCurrentUser] = useState(null); 
+
+  useEffect(() => {
+    async function fetchCurrentUser() {
+      let user = await getSession(); 
+      let userInfo = await retrieveUser(user.email); 
+      setCurrentUser(userInfo.Item); 
+    }
+
+    fetchCurrentUser(); 
+  }, [])
 
   return (
     <>
       <div id= "line"></div>
-      <div class = "video-comments">
-        <div class = "comments-header">
-          <div class = "comment-num" id = "comment-num">Comments (</div><div class = "comment-num1" id = "comment-num1"></div><div class = "comment-num">)</div>
-          <div class = "signedInUser"></div>
+      <div class = "video-comments" style={{
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
+        <div class = "comments-header"
+          style={{
+            display: 'flex',
+            justifyContent: 'left' 
+          }}
+        >
+          <img 
+            src={currentUserInfo === null ? getS3url("guest.png") : getS3url(currentUserInfo.user_profile)}
+            alt="current_user"
+            style={{
+              height:"3em",
+              width: "3em", 
+              borderRadius:'10em',
+              marginTop: '1em',
+              marginLeft: '2em',
+              marginRight: '10em'
+            }}
+          />
+          <h5 style={{
+            marginRight: '1em', 
+            marginLeft: "20em"
+          }}
+          >Comments</h5>
+          
+        
+        </div>
           <div class = "comment-form">
-            <form id = "submit-comment">
-              <input type="text" id="user-comment" name="user-comment" placeholder = "Add a comment..."></input>
+            <form id = "submit-comment" style={{
+              display: 'flex',
+            }}>
+              <input 
+                type ="text" 
+                id ="user-comment" 
+                name ="user-comment" 
+                placeholder = "Add a comment..." 
+                style={{
+                  height: "3em", 
+                  width: "150em"
+                }}
+              />
+              <button 
+                id = "comment-button" 
+                value ="COMMENT" 
+                style={{
+                  borderRadius: ".2em", 
+                  marginTop: ".01em"
+                }}
+                onClick = {() => {postComment()}}> Submit </button>
             </form>
           </div>
-          <button id = "comment-button" value="COMMENT" onClick = {() => {postComment()}}><p class = "CommentButtonText" id = "CommentButtonText">COMMENT</p></button>
         </div>
       <div class = "user-comments" id = "user-comments"></div>
-    </div>
     </>
   );
 }
@@ -160,7 +216,12 @@ function VideoInformationSection(props) {
       <div class = "video-info">
         <div class="user-image">
             <img class = "user-i" id = "userimg" 
-              src={profilePicID === "" ? "" : getS3url(profilePicID)} alt={creatorName}
+              src={profilePicID === "" ? "" : getS3url(profilePicID)} alt={creatorName} 
+              style={{
+                height:"5em",
+                width: "5em", 
+                borderRadius:'10em'
+              }}
             />
         </div>
         <div class="info-block">
@@ -199,7 +260,7 @@ function VideoPlayer() {
           console.log("here")
         }
       });   
-  }, [flick, videoID]); 
+  }, []); 
 
   return (
           <>
@@ -218,7 +279,9 @@ function VideoPlayer() {
                 creatorName={creatorName}
                 description={description}
               />
-              <CommentSection />
+              <CommentSection
+                comments={comments}
+              />
               <div class = "videoID" id="videoID"></div>
               <div class = "user_email" id="user_email">none</div>
             </div>
