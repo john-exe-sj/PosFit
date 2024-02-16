@@ -1,135 +1,81 @@
-import {useContext, useEffect, useState, useRef} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import "../css/Video.css";
 
 import aws from "../database/AWS"; 
 import { getDynamoData } from "../database/Dynamo_Video";
 import { updateDynamo } from "../database/Dynamo_Video";
-import { updatePlaylist } from "../database/Dynamo_Video";
-import { getDynamoUser } from "../database/Dynamo_Video"; 
-//import tracking from "../ai/tracking"
-import Webcam from 'react-webcam';
 
 import {AccountContext} from "../database/AccContext_Session";
-import {useHistory} from "react-router-dom";
 import {UserTableContext} from "../database/Dynamo_UserTable";
-
-import * as poseDetection from '@tensorflow-models/pose-detection';
-import '@tensorflow/tfjs-backend-webgl';
-import drawJoints from '../ai/draw'; 
 const getS3url = aws.s3.getS3url; 
 
 
-function setCommentInfo(videoID, category){
-  getDynamoData(videoID, category).then((data) => {
-    var f = data.Item.user_comments;
-    var g = data.Item.user_comments.length;
-    document.getElementById("comment-num1").innerHTML =  g;
 
-    for (let i = 0; i < f.length; i++) {
-      document.getElementById("user-comments").innerHTML = '<div class = "comment-block"> <div class ="comment-image"> <img class = "comment-image-' + i + '" id = "userimg" src={imageurl} alt="user image"></img> </div> <div class = "comment-text" id = "comment-text"> <div class = "comment-user" id = "comment-user-' + i + '"> </div> <div class = "comment-date" id = "comment-date-' + i + '"> </div> </div> <div class= "comment-message" id = "comment-message-' + i + '"> </div></div>' + document.getElementById("user-comments").innerHTML;
-    }
-
-    for (let i = 0; i < f.length; i++){
-      const imageurl = getS3url(f[i].imageurl)
-      
-      document.getElementById("comment-date-"+i).innerHTML = f[i].date;
-      document.getElementById("comment-message-"+i).innerHTML = f[i].message;
-      document.getElementById("comment-user-"+i).innerHTML = f[i].username;
-      document.getElementsByClassName("comment-image-"+i)[0].src = imageurl;
-
-    }
-
-  }
-    )
-}
-
-var ucomm = 1;
-
-function postComment(){
-
-  var user_email = document.getElementById("user_email").innerHTML;
-
-  if(user_email == 'none')
-    document.getElementById("CommentButtonText").innerHTML = "You Must Log In"
-
-  else{
-    var videoID1 = document.getElementById("videoID").innerHTML;
-
-    var videoCategory = videoID1.substring(videoID1.lastIndexOf('_')+1);
-    var videoID1 = videoID1.substring(0, videoID1.lastIndexOf('_'));
-
-    var inputVal = document.getElementById("user-comment").value;
-
-    var user_email = document.getElementById("user_email").innerHTML;
-    getDynamoUser(user_email).then((data) => {
-      console.log(data.Item.user_name);
-      console.log(data.Item.user_profile);
-
-      var signedInUserName = data.Item.user_name;
-      var signedInUserURL = data.Item.user_profile;
-
-      updateDynamo(inputVal, signedInUserName, signedInUserURL, videoID1, videoCategory);
-
-      getDynamoData(videoID1, videoCategory).then((data) => {
-        document.getElementById("user-comments").innerHTML = '<div class = "comment-block"> <div class ="comment-image"> <img class = "comment-image-u-' + ucomm + '" id = "userimg" src={imageurl} alt="user image"></img> </div> <div class = "comment-text" id = "comment-text"> <div class = "comment-user" id = "comment-user-u-' + ucomm + '"> </div> <div class = "comment-date" id = "comment-date-u-' + ucomm + '"> </div> </div> <div class= "comment-message" id = "comment-message-u-' + ucomm + '"> </div></div>' + document.getElementById("user-comments").innerHTML;
-    
-        var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); 
-        var yyyy = today.getFullYear();
-        
-        today = mm + '/' + dd + '/' + yyyy;
-    
-        var inputVal = document.getElementById("user-comment").value;
-        document.getElementById("comment-user-u-"+ucomm).innerHTML = signedInUserName;
-        document.getElementsByClassName("comment-image-u-"+ucomm)[0].src = getS3url(signedInUserURL);
-        document.getElementById("comment-message-u-"+ucomm).innerHTML = inputVal;
-        document.getElementById("comment-date-u-"+ucomm).innerHTML = today;
-    
-        ucomm++;
-    
-        var num = parseInt(document.getElementById("comment-num1").innerHTML)
-        num++;
-        document.getElementById("comment-num1").innerHTML = num;
-    
-      }
-        )
-
-    }
-      )
-  }
-}
-
-function updatePlaylistFunction(signedInUserEmail){
-  var user_email = document.getElementById("user_email").innerHTML;
-
-  if(user_email == 'none')
-    document.getElementById("add-playlist-text").innerHTML = "You Must Log In"
-  else{
-  var videoID1 = document.getElementById("videoID").innerHTML;
-  var videoCategory = videoID1.substring(videoID1.lastIndexOf('_')+1);
-  var videoID1 = videoID1.substring(0, videoID1.lastIndexOf('_'));
-  console.log(user_email)
-  document.getElementById("add-playlist-text").innerHTML = "Adding Video..."
-
-  updatePlaylist(user_email, videoID1, videoCategory)
-  document.getElementById("add-playlist-text").innerHTML = "Video Added!"
-  }
+function Comment(props) {
+  return (
+    <>
+    <div id={props.commentCount}>
+      <img 
+        src={getS3url(props.contents.imageurl)} 
+        alt={props.contents.username}
+        style={{
+          height:"3em",
+          width: "3em", 
+          borderRadius:'10em',
+          marginTop: '1em',
+          marginLeft: '2em',
+          marginRight: '10em'
+        }}
+      />
+      <p>{props.contents.username}</p>
+      <p>{props.contents.date}</p>
+      <p>{props.contents.message}</p>
+    </div>
+    </>
+  ); 
 }
 
 
-function CommentSection() {
-  // TODO: Add current user info. 
+function CommentSection(props) {
   const {getSession} = useContext(AccountContext);
   const {retrieveUser} = useContext(UserTableContext); 
+  const [comments, setComments] = useState(props.comments);
 
-  const [currentUserInfo, setCurrentUser] = useState(null); 
+  const [currentUserInfo, setCurrentUser] = useState(null);  
+  let commentCounter = 0;
+
+  function postComment(userInfo, comments, videoID, videoCategory){
+
+    if (userInfo == null) {
+      document.getElementById("CommentButtonText").innerHTML = "You Must Log In"
+    } else {
+  
+      var comment = document.getElementById("user-comment").value;
+      console.log(userInfo); 
+      console.log(videoID);
+  
+      var signedInUserName = userInfo.user_name;
+      var signedInUserURL = userInfo.user_profile;
+
+  
+      updateDynamo(comment, signedInUserName, signedInUserURL, videoID, videoCategory);
+      comments.push({ 
+        message: comment, 
+        username: signedInUserName, 
+        imageurl: signedInUserURL 
+      });
+
+      setComments([...comments]); 
+      
+    }
+  }
 
   useEffect(() => {
     async function fetchCurrentUser() {
       let user = await getSession(); 
       let userInfo = await retrieveUser(user.email); 
       setCurrentUser(userInfo.Item); 
+      console.log(props.videoCategory); 
     }
 
     fetchCurrentUser(); 
@@ -140,7 +86,8 @@ function CommentSection() {
       <div id= "line"></div>
       <div class = "video-comments" style={{
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        height:'20em'
       }}>
         <div class = "comments-header"
           style={{
@@ -164,11 +111,17 @@ function CommentSection() {
             marginRight: '1em', 
             marginLeft: "20em"
           }}
-          >Comments</h5>
+          >Comments
+          </h5>
           
         
         </div>
-          <div class = "comment-form">
+          <div 
+            class = "comment-form"
+            style={{
+              marginTop: '10px'
+            }}
+          >
             <form id = "submit-comment" style={{
               display: 'flex',
             }}>
@@ -182,18 +135,28 @@ function CommentSection() {
                   width: "150em"
                 }}
               />
-              <button 
+            </form>
+            <button 
                 id = "comment-button" 
                 value ="COMMENT" 
                 style={{
                   borderRadius: ".2em", 
                   marginTop: ".01em"
                 }}
-                onClick = {() => {postComment()}}> Submit </button>
-            </form>
+                onClick = {() => {
+                  postComment(currentUserInfo, props.comments, props.videoId, props.videoCategor); 
+                }}> Submit </button>
           </div>
         </div>
-      <div class = "user-comments" id = "user-comments"></div>
+      <div class = "user-comments" id = "user-comments">
+        {
+          props.comments.map((commentContents) => {
+            return (
+              <Comment contents={commentContents} commentCount={commentCounter++}/>
+            )
+          })
+        }
+      </div>
     </>
   );
 }
@@ -242,13 +205,13 @@ function VideoPlayer() {
   const [description, setDescription] = useState(""); 
   const [comments, setComments] = useState([]); 
   const [creatorProfilePicID, setCreatorProfilePicID] = useState(""); 
-  const flick = false; 
 
   useEffect(() => {
 
-      getDynamoData(videoID, "default").then((data) => {
-        console.log(data); 
-        if (data) {
+    async function fetchVideoData() {
+      await getDynamoData(videoID, "default").then((data) => {
+        if (data.Item) {
+          console.log(data); 
           setVideoTitle(data.Item.video_title);
           setCreatorName(data.Item.creator_name);
           setDatePublished(data.Item.date_of_publish);
@@ -259,7 +222,10 @@ function VideoPlayer() {
         } else {
           console.log("here")
         }
-      });   
+      });
+    }
+    
+    fetchVideoData()
   }, []); 
 
   return (
@@ -281,6 +247,8 @@ function VideoPlayer() {
               />
               <CommentSection
                 comments={comments}
+                videoId={videoID}
+                videoCategory={videoCategory}
               />
               <div class = "videoID" id="videoID"></div>
               <div class = "user_email" id="user_email">none</div>
