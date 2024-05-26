@@ -2,20 +2,20 @@ const AWS = require("aws-sdk");
 const Cognito =  require("amazon-cognito-identity-js");
 
 const poolData = {
-    UserPoolId: "us-east-1_QOD4mBo6F",
-    ClientId: "2u5og5gqud9m98ubkb1m9iq2tt"
+    UserPoolId: process.env.REACT_APP_ENV_USER_POOL_ID,
+    ClientId: process.env.REACT_APP_ENV_CLIENT_ID
 }
 
 let awsConfig = {
-  "region": "us-east-1",
-  "accessKeyId": "AKIA3BPEGHGKD5OOSOKQ",
-  "secretAccessKey": "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"
+  "region": process.env.REACT_APP_ENV_REGION,
+  "accessKeyId": process.env.REACT_APP_ENV_AWS_ACCESS_KEY_ID,
+  "secretAccessKey":process.env.REACT_APP_ENV_DYNAMO_SECRET_ACCESS_KEY_ID
 }
 
 AWS.config.update(awsConfig); 
 
 function getS3url(key){
-  const myBucket = 'posfit-bucket'; 
+  const myBucket = process.env.REACT_APP_ENV_S3_BUCKET_NAME; 
   const signedUrlExpireSeconds = 60 * 5; 
   const url = s3.getSignedUrl('getObject', {
       Bucket: myBucket,
