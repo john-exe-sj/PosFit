@@ -6,8 +6,8 @@ const dynamo = aws.dynamo;
 
 function UserTable(props) {
 
-    const TABLE_NAME = "posfit_users";
-
+    const TABLE_NAME = process.env.REACT_APP_ENV_DYNAMO_USER_TABLE_NAME;
+    const BUCKET_NAME = process.env.REACT_APP_ENV_S3_BUCKET_NAME; 
     //email, username, accountType, bio, profilePic
     async function insertUser (email, username, type, bio, profilePic) {
         return await new Promise((resolve, reject) => {
@@ -34,7 +34,7 @@ function UserTable(props) {
 
                     const params_pfp = {
                         Body: profilePic,
-                        Bucket: "posfit-bucket",
+                        Bucket: BUCKET_NAME,
                         Key: email + "_profile_pic.jpg",
                     };
 
@@ -75,7 +75,7 @@ function UserTable(props) {
             })
 
             const params_pfp = {
-                Bucket: "posfit-bucket",
+                Bucket: BUCKET_NAME,
                 Key: email + "_profile_pic.jpg",
             };
 
